@@ -29,4 +29,46 @@ public class DealershipFileManager {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split("\\|");
+                Vehicle v = new Vehicle(0, 0, "", "", "", "", 0, 0.0);
+                v.setVehicleId(Integer.parseInt(data[0]));
+                v.setYear(Integer.parseInt(data[1]));
+                v.setMake(data[2]);
+                v.setModel(data[3]);
+                v.setVehicleType(data[4]);
+                v.setColor(data[5]);
+                v.setOdometer(Integer.parseInt(data[6]));
+                v.setPrice(Double.parseDouble(data[7]));
+
+                dealership.addVehicle(v);
+
+                System.out.printf("%-10d %-8d %-12s %-12s %-12s %-10s %-10d $%-12.2f%n",
+                        v.getVehicleId(), v.getYear(), v.getMake(), v.getModel(),
+                        v.getVehicleType(), v.getColor(), v.getOdometer(), v.getPrice());
+            }
+
+            System.out.println(CYAN + "==================================================================================================================");
+            System.out.println("Total Vehicles Loaded: " + dealership.getAllVehicles().size());
+            System.out.println("==================================================================================================================" + RESET);
+
+        } catch (FileNotFoundException e) {
+            System.out.println(RED + "There was an error finding the file: inventory.csv file not found." + RESET);
+        } catch (IOException e) {
+            System.out.println(RED + "There was an error reading the inventory file: " + e.getMessage() + RESET);
+        } catch (Exception e) {
+            System.out.println(RED + "There was an unexpected error loading dealership: " + e.getMessage() + RESET);
+        }
+
+        return dealership;
+    }
+
+
+
+
+
+
+
+
+
+
+
 
