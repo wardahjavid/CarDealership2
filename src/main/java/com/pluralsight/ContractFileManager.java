@@ -1,8 +1,7 @@
 package com.pluralsight;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
 
 public class ContractFileManager {
     public static final String GREEN = "\u001B[32m";
@@ -51,6 +50,15 @@ public class ContractFileManager {
 
         } catch (IOException e) {
             System.out.println(RED + "⚠️ Error saving contract: " + e.getMessage() + RESET);
+        }
+    }
+
+    public ArrayList<Contract> loadContracts() {
+        ArrayList<Contract> list = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("contracts.csv"))) {
+            String line;
+
         }
     }
 }
