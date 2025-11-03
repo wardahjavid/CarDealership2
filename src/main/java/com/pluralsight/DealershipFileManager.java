@@ -12,3 +12,8 @@ public class DealershipFileManager {
 
     private static final String FILE_NAME = "inventory.csv";
 
+    public Dealership getDealership() {
+        Dealership dealership = null;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
+
