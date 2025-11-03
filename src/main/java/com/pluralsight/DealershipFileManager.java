@@ -16,5 +16,9 @@ public class DealershipFileManager {
     public static final String CYAN = "\u001B[36m";
 
     public Dealership getDealership() {
+        Dealership dealership = null;
+        ArrayList<Vehicle> vehicles = new ArrayList<>();
+        System.out.println(YELLOW + "\n LOADING DEALERSHIP DATA " + RESET);
     }
+
 }
