@@ -92,9 +92,3 @@ public class DealershipFileManager {
         System.out.println(YELLOW + "= \n" + RESET);
     }
 }
-
-
-
-    }
-
-}
