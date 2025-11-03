@@ -26,10 +26,7 @@ public class DealershipFileManager {
                     "VEHICLE", "YEAR", "MAKE", "MODEL", "TYPE", "COLOR", "MILEAGE", "PRICE");
             System.out.println("==================================================================================================================" + RESET);
 
-
-
-
-
-
-
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split("\\|");
 
