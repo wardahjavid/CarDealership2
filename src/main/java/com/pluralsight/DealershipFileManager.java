@@ -1,9 +1,7 @@
 package com.pluralsight;
 
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 public class DealershipFileManager {
@@ -62,6 +60,41 @@ public class DealershipFileManager {
             System.out.println(RED + "\n The file cannot be opened: dealership.csv" + RESET);
             System.out.println(RED + "The technical reason: " + e.getMessage() + RESET);
         }
+        if (dealership != null)
+            vehicles.forEach(dealership::addVehicle);
+
+        System.out.println(YELLOW + "= \n" + RESET);
+        return dealership;
+    }
+
+    public void saveDealership(Dealership dealership) {
+        System.out.println(YELLOW + "\n SAVING DEALERSHIP DATA " + RESET);
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("dealership.csv"))) {
+            // Write dealership info
+            bw.write(dealership.getName() + "|" + dealership.getAddress() + "|" + dealership.getPhone());
+            bw.newLine();
+
+            // Write vehicle list
+            for (Vehicle v : dealership.getAllVehicles()) {
+                bw.write(v.getVehicleId() + "|" + v.getYear() + "|" + v.getMake() + "|" +
+                        v.getModel() + "|" + v.getVehicleType() + "|" + v.getColor() + "|" +
+                        v.getOdometer() + "|" + v.getPrice());
+                bw.newLine();
+            }
+
+            System.out.println(GREEN + "The dealership data is saved successfully to dealership.csv" + RESET);
+
+        } catch (IOException e) {
+            System.out.println(RED + "\n This could not be saves to file: dealership.csv" + RESET);
+            System.out.println(RED + "The technical reason is: " + e.getMessage() + RESET);
+        }
+
+        System.out.println(YELLOW + "= \n" + RESET);
+    }
+}
+
+
+
     }
 
 }
