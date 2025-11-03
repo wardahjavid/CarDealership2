@@ -1,6 +1,9 @@
 package com.pluralsight;
 
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class DealershipFileManager {
@@ -13,8 +16,5 @@ public class DealershipFileManager {
     public static final String CYAN = "\u001B[36m";
 
     public Dealership getDealership() {
-        Dealership dealership = null;
-        ArrayList<Vehicle> vehicles = new ArrayList<>();
-        System.out.println(YELLOW + "\n LOADING DEALERSHIP DATA " + RESET);
     }
 }
