@@ -59,7 +59,32 @@ public class DealershipFileManager {
         }
 
         return dealership;
+        }
+    public void saveDealership(Dealership dealership) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
+            writer.write(dealership.getName() + "|" + dealership.getAddress() + "|" + dealership.getPhone());
+            writer.newLine();
+
+            for (Vehicle v : dealership.getAllVehicles()) {
+                writer.write(v.getVehicleId() + "|" +
+                        v.getYear() + "|" +
+                        v.getMake() + "|" +
+                        v.getModel() + "|" +
+                        v.getVehicleType() + "|" +
+                        v.getColor() + "|" +
+                        v.getOdometer() + "|" +
+                        v.getPrice());
+                writer.newLine();
+            }
+
+            System.out.println(GREEN + "The Dealership inventory was saved successfully!" + RESET);
+
+        } catch (IOException e) {
+            System.out.println(RED + "There was an error saving the dealership file: " + e.getMessage() + RESET);
+        }
     }
+
+}
 
 
 
