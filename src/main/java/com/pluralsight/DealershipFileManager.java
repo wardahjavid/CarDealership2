@@ -16,4 +16,10 @@ public class DealershipFileManager {
         Dealership dealership = null;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
+            String firstLine = reader.readLine();
+            if (firstLine != null) {
+                String[] dealerParts = firstLine.split("\\|");
+                dealership = new Dealership(dealerParts[0], dealerParts[1], dealerParts[2]);
+            }
+
 
