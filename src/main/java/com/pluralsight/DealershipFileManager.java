@@ -21,5 +21,15 @@ public class DealershipFileManager {
                 String[] dealerParts = firstLine.split("\\|");
                 dealership = new Dealership(dealerParts[0], dealerParts[1], dealerParts[2]);
             }
+            System.out.println(CYAN + "\n==================================================================================================================");
+            System.out.printf("%-10s %-8s %-12s %-12s %-12s %-10s %-10s %-12s%n",
+                    "VEHICLE", "YEAR", "MAKE", "MODEL", "TYPE", "COLOR", "MILEAGE", "PRICE");
+            System.out.println("==================================================================================================================" + RESET);
+
+
+
+
+
+
 
 
