@@ -2,79 +2,63 @@ package com.pluralsight;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class ContractFileManager {
 
-    private static final String FILE_NAME = "contracts_with_headings.csv";
+    public void saveContract(Contract contract) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("contracts.csv", true))) {
 
-    public void saveContract(Contract c) {
-        File file = new File(FILE_NAME);
-        boolean exists = file.exists();
+            if (contract instanceof SalesContract sc) {
+                StringBuilder addOns = new StringBuilder();
+                for (AddOn a : sc.getAddOns())
+                    addOns.append(a.getName()).append(",");
 
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, true))) {
-            if (!exists) {
-                bw.write("Type|Date|CustomerName|CustomerEmail|VehicleID|Make|Model|Year|Price|Total|Monthly|Finance|AddOns");
-                bw.newLine();
+                bw.write(String.format(
+                        "SALE|%s|%s|%s|%d|%d|%s|%s|%s|%s|%d|%.2f|%.2f|%.2f|%.2f|%s|%.2f|%s",
+                        sc.getContractDate(), sc.getCustomerName(), sc.getCustomerEmail(),
+                        sc.getVehicleSold().getVehicleId(), sc.getVehicleSold().getYear(),
+                        sc.getVehicleSold().getMake(), sc.getVehicleSold().getModel(),
+                        sc.getVehicleSold().getVehicleType(), sc.getVehicleSold().getColor(),
+                        sc.getVehicleSold().getOdometer(), sc.getVehicleSold().getPrice(),
+                        sc.getSalesTaxAmount(), sc.getRecordingFee(), sc.getProcessingFee(),
+                        sc.getTotalPrice(), sc.isFinanceOption() ? "YES" : "NO",
+                        sc.getMonthlyPayment(), addOns.toString()));
+            } else if (contract instanceof LeaseContract lc) {
+                bw.write(String.format(
+                        "LEASE|%s|%s|%s|%d|%d|%s|%s|%s|%s|%d|%.2f|%.2f|%.2f|%.2f|%.2f",
+                        lc.getContractDate(), lc.getCustomerName(), lc.getCustomerEmail(),
+                        lc.getVehicleSold().getVehicleId(), lc.getVehicleSold().getYear(),
+                        lc.getVehicleSold().getMake(), lc.getVehicleSold().getModel(),
+                        lc.getVehicleSold().getVehicleType(), lc.getVehicleSold().getColor(),
+                        lc.getVehicleSold().getOdometer(), lc.getVehicleSold().getPrice(),
+                        lc.getExpectedEndingValue(), lc.getLeaseFee(),
+                        lc.getTotalPrice(), lc.getMonthlyPayment()));
             }
 
-            Vehicle v = c.getVehicleSold();
+            bw.newLine();
+            System.out.println("Contract saved to contracts.csv");
 
-            if (c instanceof SalesContract) {
-                SalesContract sc = (SalesContract) c;
-                String addOns = "None";
-                if (!sc.getAddOns().isEmpty()) {
-                    StringBuilder sb = new StringBuilder();
-                    for (AddOn a : sc.getAddOns()) {
-                        sb.append(a.getName()).append(",");
-                    }
-                    addOns = sb.toString().replaceAll(",$", "");
-                }
-
-                bw.write("SALE|" + c.getDate() + "|" + c.getCustomerName() + "|" + c.getCustomerEmail() + "|" +
-                        v.getVehicleId() + "|" + v.getMake() + "|" + v.getModel() + "|" + v.getYear() + "|" +
-                        v.getPrice() + "|" + c.getTotalPrice() + "|" + c.getMonthlyPayment() + "|" +
-                        (sc.isFinanceOption() ? "YES" : "NO") + "|" + addOns);
-                bw.newLine();
-
-            } else if (c instanceof LeaseContract) {
-                bw.write("LEASE|" + c.getDate() + "|" + c.getCustomerName() + "|" + c.getCustomerEmail() + "|" +
-                        v.getVehicleId() + "|" + v.getMake() + "|" + v.getModel() + "|" + v.getYear() + "|" +
-                        v.getPrice() + "|" + c.getTotalPrice() + "|" + c.getMonthlyPayment() + "|N/A|None");
-                bw.newLine();
-            }
         } catch (IOException e) {
-            System.out.println("Error writing contracts file: " + e.getMessage());
+            System.out.println("There is an error writing the contract: " + e.getMessage());
         }
     }
 
-    public List<Contract> loadContracts() {
-        List<Contract> list = new ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(FILE_NAME))) {
+    public ArrayList<String> readAllContracts() {
+        ArrayList<String> contracts = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader("contracts.csv"))) {
             String line;
-            boolean skipHeader = true;
-
-            while ((line = br.readLine()) != null) {
-                if (skipHeader) { skipHeader = false; continue; }
-                String[] p = line.split("\\|");
-
-                String type = p[0];
-                Vehicle v = new Vehicle(Integer.parseInt(p[4]), Integer.parseInt(p[7]), p[5], p[6], "Car", "N/A", 0, Double.parseDouble(p[8]));
-
-                if (type.equalsIgnoreCase("SALE")) {
-                    SalesContract sc = new SalesContract(p[1], p[2], p[3], v, p[11].equalsIgnoreCase("YES"));
-                    if (p.length > 12 && !p[12].equalsIgnoreCase("None")) {
-                        for (String s : p[12].split(",")) sc.addAddOn(new AddOn(s.trim(), 0));
-                    }
-                    list.add(sc);
-                } else {
-                    list.add(new LeaseContract(p[1], p[2], p[3], v));
-                }
-            }
+            while ((line = br.readLine()) != null) contracts.add(line);
         } catch (IOException e) {
-            System.out.println("Error reading contracts file: " + e.getMessage());
+            System.out.println("Error reading contracts.csv: " + e.getMessage());
         }
-        return list;
+        return contracts;
+    }
+
+    public ArrayList<String> searchContracts(String keyword) {
+        ArrayList<String> matches = new ArrayList<>();
+        for (String c : readAllContracts())
+            if (c.toLowerCase().contains(keyword.toLowerCase()))
+                matches.add(c);
+        return matches;
     }
 }
