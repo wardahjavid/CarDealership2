@@ -6,8 +6,8 @@ class DealershipTest {
         @Test
         public void addVehicle_AddsToInventory() {
             // Arrange
-            Dealership dealer = new Dealership("Auto World", "123 Main St", "555-5555");
-            Vehicle car = new Vehicle(1, 2023, "Mazda", "CX-5", "SUV", "Gray", 5000, 28000.0);
+            Dealership dealer = new Dealership("Potato Crescent Auto", "145 Main St", "888-9999");
+            Vehicle car = new Vehicle(1, 2023, "Mazda", "CX-5", "SUV", "Light Blue", 3000, 12000.0);
 
             // Act
             dealer.addVehicle(car);
@@ -19,8 +19,8 @@ class DealershipTest {
         @Test
         public void removeVehicle_RemovesFromInventory() {
             // Arrange
-            Dealership dealer = new Dealership("City Motors", "456 Oak Ave", "555-1212");
-            Vehicle car = new Vehicle(2, 2022, "Ford", "Focus", "Sedan", "Blue", 10000, 19000.0);
+            Dealership dealer = new Dealership("Potato Star Auto", "235 Potato Road", "777-2222");
+            Vehicle car = new Vehicle(2, 2019, "Ford", "Focus", "Sedan", "Red", 12000, 15000.0);
             dealer.addVehicle(car);
 
             // Act

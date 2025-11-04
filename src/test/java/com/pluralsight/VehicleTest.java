@@ -8,7 +8,7 @@ class VehicleTest {
     @Test
     public void setAndGetVehicleData_VehicleInfoMatches() {
         // Arrange
-        Vehicle car = new Vehicle(1, 2022, "Toyota", "Camry", "Sedan", "Blue", 15000, 25000.00);
+        Vehicle car = new Vehicle(1, 2020, "Toyota", "Camry", "Sedan", "Silver", 20000, 25000.00);
 
         // Act
         int actualYear = car.getYear();
@@ -27,7 +27,7 @@ class VehicleTest {
     @Test
     public void toString_ReturnsFormattedString() {
         // Arrange
-        Vehicle car = new Vehicle(2, 2021, "Honda", "Civic", "Coupe", "Red", 22000, 18000.00);
+        Vehicle car = new Vehicle(2, 2029, "Honda", "Civic", "Coupe", "Red", 12000, 8000.00);
 
         // Act
         String description = car.toString();
