@@ -16,99 +16,61 @@ public class Dealership {
         this.inventory = new ArrayList<>();
     }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
+    public String getAddress() { return address; }
+    public String getPhone() { return phone; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public ArrayList<Vehicle> getAllVehicles() { return inventory; }
 
-    public String getAddress() {
-        return address;
-    }
+    public void addVehicle(Vehicle vehicle) { inventory.add(vehicle); }
+    public void removeVehicle(Vehicle vehicle) { inventory.remove(vehicle); }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
+    // Filtering methods
     public List<Vehicle> getVehiclesByPrice(double min, double max) {
-        List<Vehicle> matchingVehicles = new ArrayList<>();
-        for (Vehicle vehicle : inventory) {
-            if (vehicle.getPrice() >= min && vehicle.getPrice() <= max) {
-                matchingVehicles.add(vehicle);
-            }
-        }
-        return matchingVehicles;
+        List<Vehicle> result = new ArrayList<>();
+        for (Vehicle v : inventory)
+            if (v.getPrice() >= min && v.getPrice() <= max)
+                result.add(v);
+        return result;
     }
 
     public List<Vehicle> getVehiclesByMakeModel(String make, String model) {
-        List<Vehicle> matchingVehicles = new ArrayList<>();
-        for (Vehicle vehicle : inventory) {
-            if (vehicle.getMake().equalsIgnoreCase(make) && vehicle.getModel().equalsIgnoreCase(model)) {
-                matchingVehicles.add(vehicle);
-            }
-        }
-        return matchingVehicles;
+        List<Vehicle> result = new ArrayList<>();
+        for (Vehicle v : inventory)
+            if (v.getMake().equalsIgnoreCase(make) && v.getModel().equalsIgnoreCase(model))
+                result.add(v);
+        return result;
     }
 
     public List<Vehicle> getVehiclesByYear(int min, int max) {
-        List<Vehicle> matchingVehicles = new ArrayList<>();
-        for (Vehicle vehicle : inventory) {
-            if (vehicle.getYear() >= min && vehicle.getYear() <= max) {
-                matchingVehicles.add(vehicle);
-            }
-        }
-        return matchingVehicles;
+        List<Vehicle> result = new ArrayList<>();
+        for (Vehicle v : inventory)
+            if (v.getYear() >= min && v.getYear() <= max)
+                result.add(v);
+        return result;
     }
 
     public List<Vehicle> getVehiclesByColor(String color) {
-        List<Vehicle> matchingVehicles = new ArrayList<>();
-        for (Vehicle vehicle : inventory) {
-            if (vehicle.getColor().equalsIgnoreCase(color)) {
-                matchingVehicles.add(vehicle);
-            }
-        }
-        return matchingVehicles;
+        List<Vehicle> result = new ArrayList<>();
+        for (Vehicle v : inventory)
+            if (v.getColor().equalsIgnoreCase(color))
+                result.add(v);
+        return result;
     }
 
     public List<Vehicle> getVehiclesByMileage(int min, int max) {
-        List<Vehicle> matchingVehicles = new ArrayList<>();
-        for (Vehicle vehicle : inventory) {
-            if (vehicle.getOdometer() >= min && vehicle.getOdometer() <= max) {
-                matchingVehicles.add(vehicle);
-            }
-        }
-        return matchingVehicles;
+        List<Vehicle> result = new ArrayList<>();
+        for (Vehicle v : inventory)
+            if (v.getOdometer() >= min && v.getOdometer() <= max)
+                result.add(v);
+        return result;
     }
 
-    public List<Vehicle> getVehiclesByType(String vehicleType) {
-        List<Vehicle> matchingVehicles = new ArrayList<>();
-        for (Vehicle vehicle : inventory) {
-            if (vehicle.getVehicleType().equalsIgnoreCase(vehicleType)) {
-                matchingVehicles.add(vehicle);
-            }
-        }
-        return matchingVehicles;
-    }
-
-    public List<Vehicle> getAllVehicles() {
-        return inventory;
-    }
-
-    public void addVehicle(Vehicle vehicle) {
-        inventory.add(vehicle);
-    }
-
-    public void removeVehicle(Vehicle vehicle) {
-        inventory.remove(vehicle);
+    public List<Vehicle> getVehiclesByType(String type) {
+        List<Vehicle> result = new ArrayList<>();
+        for (Vehicle v : inventory)
+            if (v.getVehicleType().equalsIgnoreCase(type))
+                result.add(v);
+        return result;
     }
 }

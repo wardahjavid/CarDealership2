@@ -7,27 +7,26 @@ import java.util.List;
 import java.util.Scanner;
 
 public class AdminUserInterface {
-
-    private final Scanner scanner = new Scanner(System.in);
     private final ContractFileManager contractManager = new ContractFileManager();
+    private final Scanner scanner = new Scanner(System.in);
 
     public void display() {
         boolean quit = false;
         while (!quit) {
-            System.out.println("\n────────── Admin Menu ──────────");
+            System.out.println("\n─── Admin Menu ───");
             System.out.println("1. List ALL contracts");
             System.out.println("2. List LAST 10 contracts");
-            System.out.println("3. Export Contract Report");
-            System.out.println("99. Exit Admin Menu");
-            System.out.print("Enter choice: ");
-            String choice = scanner.nextLine();
+            System.out.println("3. Export report");
+            System.out.println("99. Exit");
+            System.out.print("Choice: ");
+            String option = scanner.nextLine();
 
-            switch (choice) {
-                case "1": listContracts(false); break;
-                case "2": listContracts(true); break;
-                case "3": exportReport(); break;
-                case "99": quit = true; break;
-                default: System.out.println("Invalid choice.");
+            switch (option) {
+                case "1" -> listContracts(false);
+                case "2" -> listContracts(true);
+                case "3" -> exportReport();
+                case "99" -> quit = true;
+                default -> System.out.println("Invalid option");
             }
         }
     }
@@ -38,56 +37,53 @@ public class AdminUserInterface {
             System.out.println("No contracts found.");
             return;
         }
+
         if (lastTenOnly && contracts.size() > 10) {
             contracts = contracts.subList(contracts.size() - 10, contracts.size());
         }
-        String[] headers = TableFormatter.contractHeaders();
-        var rows = TableFormatter.contractsToRows(contracts);
-        System.out.println(TableFormatter.render(headers, rows));
-        System.out.printf("Displayed %d contract(s).%n", contracts.size());
+
+        System.out.println("\n    Contracts ");
+        for (Contract c : contracts) {
+            System.out.printf("[%s] %s | %s | $%.2f total | $%.2f/month%n",
+                    c instanceof SalesContract ? "SALE" : "LEASE",
+                    c.getCustomerName(), c.getVehicleSold().getModel(),
+                    c.getTotalPrice(), c.getMonthlyPayment());
+        }
+        System.out.println("---------------------------------------");
     }
 
     private void exportReport() {
         List<Contract> contracts = contractManager.loadContracts();
         if (contracts.isEmpty()) {
-            System.out.println("No contracts found to analyze.");
+            System.out.println("No contracts found to export.");
             return;
         }
 
-        int totalSales = 0, totalLeases = 0;
-        double totalRevenue = 0.0, totalMonthly = 0.0;
-
+        int sales = 0, leases = 0;
+        double totalRevenue = 0;
         for (Contract c : contracts) {
-            if (c instanceof SalesContract) totalSales++;
-            else if (c instanceof LeaseContract) totalLeases++;
+            if (c instanceof SalesContract) sales++;
+            else leases++;
             totalRevenue += c.getTotalPrice();
-            totalMonthly += c.getMonthlyPayment();
         }
 
-        double avgMonthly = totalMonthly / contracts.size();
-
         String report = String.format("""
-                ────────── Dealership Contract Report ──────────
+                ───────── Dealership Contract Report ─────────
                 Total Contracts: %d
-                Total Sales Contracts: %d
-                Total Lease Contracts: %d
-
-                Total Revenue (from all contracts): $%.2f
-                Average Monthly Payment: $%.2f
-
-                Report Generated: %s
-                ────────────────────────────────────────────────
-                """,
-                contracts.size(), totalSales, totalLeases,
-                totalRevenue, avgMonthly, java.time.LocalDate.now());
+                Sales Contracts: %d
+                Lease Contracts: %d
+                Total Revenue: $%.2f
+                Generated: %s
+                ─────────────────────────────────────────────
+                """, contracts.size(), sales, leases, totalRevenue, java.time.LocalDate.now());
 
         System.out.println(report);
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("contracts_report.txt"))) {
-            writer.write(report);
-            System.out.println("Report exported to contracts_report.txt");
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("contract_report.txt"))) {
+            bw.write(report);
+            System.out.println("✅ Report saved to contract_report.txt");
         } catch (IOException e) {
-            System.out.println("There is an error writing report: " + e.getMessage());
+            System.out.println("Error exporting report: " + e.getMessage());
         }
     }
 }

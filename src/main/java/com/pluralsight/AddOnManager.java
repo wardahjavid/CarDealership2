@@ -1,17 +1,29 @@
 package com.pluralsight;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.*;
+import java.util.ArrayList;
 
 public class AddOnManager {
-    public static List<AddOn> getAvailableAddOns() {
-        return Arrays.asList(
-                new AddOn("Nitrogen Tires", 150),
-                new AddOn("Window Tinting", 200),
-                new AddOn("All-Season Floor Mats", 100),
-                new AddOn("Splash Guards", 85),
-                new AddOn("Cargo Tray", 120),
-                new AddOn("Wheel Locks", 75)
-        );
+
+    public static ArrayList<AddOn> getAvailableAddOns() {
+        ArrayList<AddOn> list = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader("addons.csv"))) {
+            br.readLine(); // skip header
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] p = line.split(",");
+                list.add(new AddOn(p[0], Double.parseDouble(p[1])));
+            }
+        } catch (IOException e) {
+            System.out.println("addons.csv not found, using default add-ons.");
+            list.add(new AddOn("Extended Warranty", 999.99));
+            list.add(new AddOn("Rust Protection", 499.99));
+            list.add(new AddOn("Tire & Wheel Coverage", 299.99));
+            list.add(new AddOn("Paint Protection", 249.99));
+            list.add(new AddOn("Roadside Assistance", 199.99));
+        }
+
+        return list;
     }
 }
