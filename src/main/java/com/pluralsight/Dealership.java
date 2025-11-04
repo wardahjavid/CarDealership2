@@ -26,12 +26,12 @@ public class Dealership {
     public void removeVehicle(Vehicle vehicle) { inventory.remove(vehicle); }
 
     // Filtering methods
-    public List<Vehicle> getVehiclesByPrice(double min, double max) {
+    public ArrayList<Vehicle> getVehiclesByPrice(double min, double max) {
         List<Vehicle> result = new ArrayList<>();
         for (Vehicle v : inventory)
             if (v.getPrice() >= min && v.getPrice() <= max)
                 result.add(v);
-        return result;
+        return (ArrayList<Vehicle>) result;
     }
 
     public List<Vehicle> getVehiclesByMakeModel(String make, String model) {

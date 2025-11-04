@@ -21,8 +21,7 @@ class VehicleTest {
         assertEquals(25000.00, actualPrice, 0.01);
     }
 
-    private void assertEquals(int i, int actualYear) {
-    }
+
 
     @Test
     public void toString_ReturnsFormattedString() {

@@ -50,4 +50,8 @@ public class Vehicle {
         return vehicleId + " | " + year + " " + make + " " + model + " | " + vehicleType +
                 " | " + color + " | " + odometer + " miles | $" + price;
     }
+
+    public Object getType() {
+        return null;
+    }
 }

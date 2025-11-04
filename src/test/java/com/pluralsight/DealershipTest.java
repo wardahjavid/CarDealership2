@@ -1,12 +1,16 @@
 package com.pluralsight;
 
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class DealershipTest {
         @Test
         public void addVehicle_AddsToInventory() {
             // Arrange
-            Dealership dealer = new Dealership("Potato Crescent Auto", "145 Main St", "888-9999");
+            Dealership dealer = new Dealership("Potato Crescent Auto", "145 Potato St", "888-9999");
             Vehicle car = new Vehicle(1, 2023, "Mazda", "CX-5", "SUV", "Light Blue", 3000, 12000.0);
 
             // Act
@@ -47,4 +51,3 @@ class DealershipTest {
     }
 
 
-}
