@@ -1,13 +1,13 @@
 package com.pluralsight;
 
 public class LeaseContract extends Contract {
-    private double expectedEndingValue;
-    private double leaseFee;
+    private final double expectedEndingValue;
+    private final double leaseFee;
 
-    public LeaseContract(String date, String name, String email, Vehicle v) {
-        super(date, name, email, v);
-        this.expectedEndingValue = v.getPrice() * 0.5;
-        this.leaseFee = v.getPrice() * 0.07;
+    public LeaseContract(String date, String customerName, String customerEmail, Vehicle vehicleSold) {
+        super(date, customerName, customerEmail, vehicleSold);
+        this.expectedEndingValue = vehicleSold.getPrice() * 0.5;
+        this.leaseFee = vehicleSold.getPrice() * 0.07;
     }
 
     @Override
@@ -17,13 +17,12 @@ public class LeaseContract extends Contract {
 
     @Override
     public double getMonthlyPayment() {
-        int months = 36;
-        double rate = 4.0 / 1200;
-        double payment = getTotalPrice() * (rate * Math.pow(1 + rate, months))
-                / (Math.pow(1 + rate, months) - 1);
-        return Math.round(payment * 100.0) / 100.0;
+        int numberOfPayments = 36;
+        double interestRate = 4.0 / 1200;
+        double monthlyPayment = getTotalPrice() *
+                (interestRate * Math.pow(1 + interestRate, numberOfPayments)) /
+                (Math.pow(1 + interestRate, numberOfPayments) - 1);
+        monthlyPayment = Math.round(monthlyPayment * 100) / 100.0;
+        return monthlyPayment;
     }
-
-    public double getExpectedEndingValue() { return expectedEndingValue; }
-    public double getLeaseFee() { return leaseFee; }
 }

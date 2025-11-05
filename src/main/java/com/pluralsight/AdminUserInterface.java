@@ -1,54 +1,50 @@
 package com.pluralsight;
 
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class AdminUserInterface {
-    private ContractFileManager manager = new ContractFileManager();
-    private Scanner scanner = new Scanner(System.in);
 
     public void display() {
-        boolean quit = false;
+        String fileName = "contracts_with_headings.csv";
+        System.out.println("\n--- ADMIN CONTRACT LIST (" + fileName + ") ---");
 
-        while (!quit) {
-            System.out.println("\n--- ADMIN MENU ---");
-            System.out.println("1. View All Contracts");
-            System.out.println("2. View Last 10 Contracts");
-            System.out.println("3. Search Contracts");
-            System.out.println("99. Return to Main Menu");
-            System.out.print("Choice: ");
-            String choice = scanner.nextLine();
+        int count = 0;
+        double totalSales = 0;
+        double totalMonthlyPayments = 0;
+        boolean firstLine = true;
 
-            switch (choice) {
-                case "1" -> viewAll();
-                case "2" -> viewLastTen();
-                case "3" -> search();
-                case "99" -> quit = true;
-                default -> System.out.println("Invalid option. Try again.");
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (firstLine) {  // skip heading row
+                    System.out.println(line);
+                    firstLine = false;
+                    continue;
+                }
+
+                System.out.println(line);
+                count++;
+
+                String[] parts = line.split("\\|");
+                if (parts.length >= 17) {
+                    try {
+                        totalSales += Double.parseDouble(parts[15]);
+                        totalMonthlyPayments += Double.parseDouble(parts[17]);
+                    } catch (NumberFormatException ignored) {}
+                }
             }
+
+            // 🧾 Print summary after listing all lines
+            System.out.println("\n--- SUMMARY REPORT ---");
+            System.out.printf("Total Contracts: %d%n", count);
+            System.out.printf("Total Sales Value: $%.2f%n", totalSales);
+            System.out.printf("Average Monthly Payment: $%.2f%n",
+                    count > 0 ? totalMonthlyPayments / count : 0);
+
+        } catch (IOException e) {
+            System.out.println("⚠️ No contracts found: " + e.getMessage());
         }
-    }
-
-    private void viewAll() {
-        ArrayList<String> contracts = manager.readAllContracts();
-        System.out.println("\n--- ALL CONTRACTS ---");
-        for (String c : contracts) System.out.println(c);
-    }
-
-    private void viewLastTen() {
-        ArrayList<String> all = manager.readAllContracts();
-        int start = Math.max(0, all.size() - 10);
-        System.out.println("\n--- LAST 10 CONTRACTS ---");
-        for (int i = start; i < all.size(); i++)
-            System.out.println(all.get(i));
-    }
-
-    private void search() {
-        System.out.print("Enter customer name or SALE/LEASE keyword: ");
-        String key = scanner.nextLine();
-        ArrayList<String> results = manager.searchContracts(key);
-        System.out.println("\n-- SEARCH RESULTS --");
-        if (results.isEmpty()) System.out.println("No matches found.");
-        else for (String s : results) System.out.println(s);
     }
 }

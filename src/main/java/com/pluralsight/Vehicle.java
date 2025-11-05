@@ -33,7 +33,6 @@ public class Vehicle {
 
     @Override
     public String toString() {
-        return String.format("%-5d %-6d %-10s %-10s %-8s %-10s %-8d $%.2f",
-                vehicleId, year, make, model, vehicleType, color, odometer, price);
+        return year + " " + make + " " + model + " (" + color + ") $" + price;
     }
 }
