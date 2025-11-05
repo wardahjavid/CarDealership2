@@ -1,84 +1,68 @@
 package com.pluralsight;
 
 import java.io.*;
-import java.util.ArrayList;
 
 public class ContractFileManager {
 
-    // Save a contract to CSV safely (handles Windows file lock)
-    public void saveContract(Contract contract) {
-        String fileName = "contracts_with_headings.csv";  // unified file
+    private static final String CONTRACT_FILE = "contracts_with_headings.csv";
 
-        for (int attempt = 1; attempt <= 3; attempt++) {
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true))) {
-
-                if (contract instanceof SalesContract sc) {
-                    StringBuilder addOns = new StringBuilder();
-
-                    // Include add-ons if present
-                    if (sc.getAddOns() != null && !sc.getAddOns().isEmpty()) {
-                        for (AddOn a : sc.getAddOns()) {
-                            addOns.append(a.getName()).append(", ");
-                        }
-                        addOns = new StringBuilder(addOns.substring(0, addOns.length() - 2)); // trim last comma
-                    } else {
-                        addOns.append("None");
-                    }
-
-                    bw.write(String.format(
-                            "SALE|%s|%s|%s|%d|%d|%s|%s|%s|%s|%d|%.2f|%.2f|%.2f|%.2f|%s|%.2f|%s",
-                            sc.getContractDate(), sc.getCustomerName(), sc.getCustomerEmail(),
-                            sc.getVehicleSold().getVehicleId(), sc.getVehicleSold().getYear(),
-                            sc.getVehicleSold().getMake(), sc.getVehicleSold().getModel(),
-                            sc.getVehicleSold().getVehicleType(), sc.getVehicleSold().getColor(),
-                            sc.getVehicleSold().getOdometer(), sc.getVehicleSold().getPrice(),
-                            sc.getSalesTaxAmount(), sc.getRecordingFee(), sc.getProcessingFee(),
-                            sc.getTotalPrice(), sc.isFinanceOption() ? "YES" : "NO",
-                            sc.getMonthlyPayment(), addOns.toString()));
-                }
-                else if (contract instanceof LeaseContract lc) {
-                    bw.write(String.format(
-                            "LEASE|%s|%s|%s|%d|%d|%s|%s|%s|%s|%d|%.2f|%.2f|%.2f|%.2f|%.2f",
-                            lc.getContractDate(), lc.getCustomerName(), lc.getCustomerEmail(),
-                            lc.getVehicleSold().getVehicleId(), lc.getVehicleSold().getYear(),
-                            lc.getVehicleSold().getMake(), lc.getVehicleSold().getModel(),
-                            lc.getVehicleSold().getVehicleType(), lc.getVehicleSold().getColor(),
-                            lc.getVehicleSold().getOdometer(), lc.getVehicleSold().getPrice(),
-                            lc.getExpectedEndingValue(), lc.getLeaseFee(),
-                            lc.getTotalPrice(), lc.getMonthlyPayment()));
-                }
-
-                bw.newLine();
-                System.out.println("\n✅ Contract successfully saved to " + fileName);
-                System.out.println("--------------------------------------------");
-                System.out.println("Customer: " + contract.getCustomerName());
-                System.out.println("Vehicle:  " + contract.getVehicleSold().getMake() + " " +
-                        contract.getVehicleSold().getModel());
-                System.out.println("Total Cost: $" + String.format("%.2f", contract.getTotalPrice()));
-                System.out.println("Monthly Payment: $" + String.format("%.2f", contract.getMonthlyPayment()));
-                System.out.println("--------------------------------------------");
-                return; // success → exit retry loop
-
-            } catch (IOException e) {
-                System.out.println("⚠️  Attempt " + attempt + ": File may be locked, retrying...");
-                try { Thread.sleep(1000); } catch (InterruptedException ignored) {}
-            }
-        }
-
-        System.out.println("❌ Error: Could not save contract after multiple attempts.");
+    public ContractFileManager() {
+        ensureFileHasHeader();
     }
 
-    // Optional: read all contracts
-    public ArrayList<String> readAllContracts() {
-        ArrayList<String> contracts = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader("contracts_with_headings.csv"))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                contracts.add(line);
+    private void ensureFileHasHeader() {
+        File file = new File(CONTRACT_FILE);
+        if (!file.exists()) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(CONTRACT_FILE))) {
+                writer.write("Type|contract date|name|email|car id|year|make|model|vehicle type|color|odometer|price|sales tax|recording fee|processing fee|total cost|finance|monthly payment");
+                writer.newLine();
+                System.out.println("Created file with headings: " + CONTRACT_FILE);
+            } catch (IOException e) {
+                System.out.println("Unable to create contracts_with_headings.csv: " + e.getMessage());
             }
-        } catch (IOException e) {
-            System.out.println("Error reading contracts_with_headings.csv: " + e.getMessage());
         }
-        return contracts;
+    }
+
+    public void saveContract(Contract contract) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(CONTRACT_FILE, true))) {
+            Vehicle v = contract.getVehicleSold();
+            StringBuilder sb = new StringBuilder();
+
+            if (contract instanceof SalesContract sc) {
+                sb.append("SALE|").append(contract.getDate()).append("|")
+                        .append(contract.getCustomerName()).append("|")
+                        .append(contract.getCustomerEmail()).append("|")
+                        .append(v.getVehicleId()).append("|").append(v.getYear()).append("|")
+                        .append(v.getMake()).append("|").append(v.getModel()).append("|")
+                        .append(v.getVehicleType()).append("|").append(v.getColor()).append("|")
+                        .append(v.getOdometer()).append("|").append(String.format("%.2f", v.getPrice())).append("|")
+                        .append(String.format("%.2f", v.getPrice() * 0.05)).append("|")
+                        .append("100.00|")
+                        .append(String.format("%.2f", v.getPrice() >= 10000 ? 495.00 : 295.00)).append("|")
+                        .append(String.format("%.2f", sc.getTotalPrice())).append("|")
+                        .append(sc.getMonthlyPayment() > 0 ? "YES" : "NO").append("|")
+                        .append(String.format("%.2f", sc.getMonthlyPayment()));
+            } else if (contract instanceof LeaseContract lc) {
+                sb.append("LEASE|").append(contract.getDate()).append("|")
+                        .append(contract.getCustomerName()).append("|")
+                        .append(contract.getCustomerEmail()).append("|")
+                        .append(v.getVehicleId()).append("|").append(v.getYear()).append("|")
+                        .append(v.getMake()).append("|").append(v.getModel()).append("|")
+                        .append(v.getVehicleType()).append("|").append(v.getColor()).append("|")
+                        .append(v.getOdometer()).append("|").append(String.format("%.2f", v.getPrice())).append("|")
+                        .append(String.format("%.2f", v.getPrice() * 0.5)).append("|")
+                        .append(String.format("%.2f", v.getPrice() * 0.07)).append("|")
+                        .append(String.format("%.2f", lc.getTotalPrice())).append("|")
+                        .append("N/A|")
+                        .append(String.format("%.2f", lc.getMonthlyPayment()));
+            }
+
+            writer.write(sb.toString());
+            writer.newLine();
+            System.out.println("The contract is saved to 'contracts_with_headings.csv'");
+
+        } catch (IOException e) {
+            System.out.println("Error saving contract: " + e.getMessage());
+        }
     }
 }

@@ -8,7 +8,7 @@ public class AdminUserInterface {
 
     public void display() {
         String fileName = "contracts_with_headings.csv";
-        System.out.println("\n--- ADMIN CONTRACT LIST (" + fileName + ") ---");
+        System.out.println("\n-- ADMIN CONTRACT LIST (" + fileName + ") --");
 
         int count = 0;
         double totalSales = 0;
@@ -36,7 +36,6 @@ public class AdminUserInterface {
                 }
             }
 
-            // 🧾 Print summary after listing all lines
             System.out.println("\n--- SUMMARY REPORT ---");
             System.out.printf("Total Contracts: %d%n", count);
             System.out.printf("Total Sales Value: $%.2f%n", totalSales);
@@ -44,7 +43,7 @@ public class AdminUserInterface {
                     count > 0 ? totalMonthlyPayments / count : 0);
 
         } catch (IOException e) {
-            System.out.println("⚠️ No contracts found: " + e.getMessage());
+            System.out.println("There are no contracts found: " + e.getMessage());
         }
     }
 }
